@@ -16,8 +16,10 @@ var startGame = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_sp
 
 if (device_mouse_check_button_pressed(0, mb_left) && !global.rotateNeeded)
 {
-    var mx = device_mouse_x_to_gui(0);
-    var my = device_mouse_y_to_gui(0);
+    // Mouse/finger position. Room coordinates match the menu/HUD layout exactly (both are 672 x 416),
+    // and GameMaker keeps them correct on every platform, including the web version.
+    var mx = device_mouse_x(0);
+    var my = device_mouse_y(0);
     var cx = room_width / 2;
 
     // Tap a speed to choose it

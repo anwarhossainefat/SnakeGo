@@ -5,8 +5,10 @@ if (keyboard_check_pressed(ord("M")))
 }
 
 // --- PAUSE: P or Esc, the pause button in the HUD, or tap anywhere while paused ---
-var mx = device_mouse_x_to_gui(0);   // finger / mouse position in GUI coordinates (672 x 416)
-var my = device_mouse_y_to_gui(0);
+// Mouse/finger position. Room coordinates match the menu/HUD layout exactly (both are 672 x 416),
+// and GameMaker keeps them correct on every platform, including the web version.
+var mx = device_mouse_x(0);
+var my = device_mouse_y(0);
 var tapped = device_mouse_check_button_pressed(0, mb_left);
 var onPauseButton = point_in_rectangle(mx, my, room_width - 44, 0, room_width, 32);
 
