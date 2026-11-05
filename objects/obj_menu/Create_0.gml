@@ -129,8 +129,10 @@ if (!variable_global_exists("speedIndex"))
     global.speedBase   = [0.30, 0.25, 0.18];                          // Slow, Normal, Fast
     global.levelFactor = [1.00, 0.72, 0.60, 0.56, 0.52, 0.49, 0.46, 0.43]; // Level 1..8
 
-    // What to play: 0 = Campaign (all levels in order), 1..8 = Free play on that level
-    global.menuChoice = 0;
+    // Menu state: which screen is showing ("home" or "levels"), and what's highlighted
+    global.menuScreen = "home";
+    global.modeFocus  = 0;      // home screen: 0 = Campaign button, 1 = Free play button
+    global.levelFocus = 0;      // level screen: 0..7 = the highlighted level card
     global.freePlay   = false;
     global.level      = 1;
 

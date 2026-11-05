@@ -1,79 +1,128 @@
-// Menu layout (shared with Draw GUI):
-//   speed rows at y = 168, 204, 240   ·   mode/level picker at y = 290   ·   Play button at y = 336
+// =====================================================================
+// MENU: two screens
+//   "home"   -> choose a speed, then Campaign (starts right away) or Free play
+//   "levels" -> Free play: choose one of the level cards
+// Layout numbers here must match Draw GUI.
+// =====================================================================
+var cx = room_width / 2;
 
-// --- KEYBOARD ---
-// Up/Down (or W/S): choose a speed
-if (keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W")))
+// Mouse/finger position. Room coordinates match the menu layout exactly (both are 672 x 416),
+// and GameMaker keeps them correct on every platform, including the web version.
+var mx = device_mouse_x(0);
+var my = device_mouse_y(0);
+var tapped = device_mouse_check_button_pressed(0, mb_left) && !global.rotateNeeded;
+var enter  = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
+
+// Start a game: Campaign (from level 1) or Free play on one level
+var startGame = function(_freePlay, _level)
 {
-    global.speedIndex = max(0, global.speedIndex - 1);
-    global.playSound(global.sndTick);
+	global.playSound(global.sndSelect);
+	global.freePlay   = _freePlay;
+	global.level      = _level;
+	global.totalScore = 0;
+	global.gameWon    = false;
+	room_goto(rm_game);
+};
+
+if (global.menuScreen == "home")
+{
+	// --- Speed: Up/Down (or W/S), or tap a row ---
+	if (keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W")))
+	{
+		global.speedIndex = max(0, global.speedIndex - 1);
+		global.playSound(global.sndTick);
+	}
+	if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S")))
+	{
+		global.speedIndex = min(2, global.speedIndex + 1);
+		global.playSound(global.sndTick);
+	}
+	if (tapped)
+	{
+		for (var i = 0; i < 3; i++)
+		{
+			var yy = 168 + i * 36;
+			if (point_in_rectangle(mx, my, cx - 152, yy - 16, cx + 152, yy + 16) && global.speedIndex != i)
+			{
+				global.speedIndex = i;
+				global.playSound(global.sndTick);
+			}
+		}
+	}
+
+	// --- Mode: Left/Right (or A/D) to highlight, Enter to choose; or tap a button ---
+	if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A")) ||
+	    keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D")))
+	{
+		global.modeFocus = 1 - global.modeFocus;
+		global.playSound(global.sndTick);
+	}
+
+	var chooseMode = enter ? global.modeFocus : -1;
+	if (tapped)
+	{
+		if (point_in_rectangle(mx, my, cx - 180, 270, cx - 10, 326)) chooseMode = 0;
+		if (point_in_rectangle(mx, my, cx + 10, 270, cx + 180, 326)) chooseMode = 1;
+	}
+
+	if (chooseMode == 0)
+	{
+		global.modeFocus = 0;
+		startGame(false, 1);
+	}
+	else if (chooseMode == 1)
+	{
+		global.modeFocus  = 1;
+		global.menuScreen = "levels";
+		global.playSound(global.sndSelect);
+	}
+}
+else // "levels"
+{
+	// --- Move between the cards: arrow keys / WASD (4 cards per row) ---
+	var n = global.levelCount;
+	var f = global.levelFocus;
+	if (keyboard_check_pressed(vk_left)  || keyboard_check_pressed(ord("A"))) f -= 1;
+	if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) f += 1;
+	if (keyboard_check_pressed(vk_up)    || keyboard_check_pressed(ord("W"))) f -= 4;
+	if (keyboard_check_pressed(vk_down)  || keyboard_check_pressed(ord("S"))) f += 4;
+	f = clamp(f, 0, n - 1);
+	if (f != global.levelFocus)
+	{
+		global.levelFocus = f;
+		global.playSound(global.sndTick);
+	}
+
+	var playLevel = enter ? global.levelFocus : -1;
+	var goBack = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_backspace);
+
+	if (tapped)
+	{
+		// Tap a card to play that level
+		for (var k = 0; k < n; k++)
+		{
+			var x0 = 32 + (k mod 4) * 156;
+			var y0 = 70 + (k div 4) * 134;
+			if (point_in_rectangle(mx, my, x0, y0, x0 + 140, y0 + 120)) playLevel = k;
+		}
+		// Tap Back
+		if (point_in_rectangle(mx, my, 32, 334, 152, 370)) goBack = true;
+	}
+
+	if (playLevel >= 0)
+	{
+		global.levelFocus = playLevel;
+		startGame(true, playLevel + 1);
+	}
+	else if (goBack)
+	{
+		global.menuScreen = "home";
+		global.playSound(global.sndTick);
+	}
 }
 
-if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S")))
+// --- Sound: M, or tap "Sound on/off" in the top-right corner ---
+if (keyboard_check_pressed(ord("M")) || (tapped && point_in_rectangle(mx, my, room_width - 110, 0, room_width, 32)))
 {
-    global.speedIndex = min(2, global.speedIndex + 1);
-    global.playSound(global.sndTick);
-}
-
-// Left/Right (or A/D): Campaign, or Free play on level 1, 2, 3 ...
-var pick = 0;
-if (keyboard_check_pressed(vk_left)  || keyboard_check_pressed(ord("A"))) pick = -1;
-if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) pick = 1;
-
-var startGame = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
-
-// --- TAPS / CLICKS ---
-if (device_mouse_check_button_pressed(0, mb_left) && !global.rotateNeeded)
-{
-    // Mouse/finger position. Room coordinates match the menu layout exactly (both are 672 x 416),
-    // and GameMaker keeps them correct on every platform, including the web version.
-    var mx = device_mouse_x(0);
-    var my = device_mouse_y(0);
-    var cx = room_width / 2;
-
-    // Tap a speed to choose it
-    for (var i = 0; i < 3; i++)
-    {
-        var yy = 168 + i * 36;
-        if (point_in_rectangle(mx, my, cx - 152, yy - 16, cx + 152, yy + 16) && global.speedIndex != i)
-        {
-            global.speedIndex = i;
-            global.playSound(global.sndTick);
-        }
-    }
-
-    // Tap the arrows on the mode picker (or its middle, to go forward)
-    if (point_in_rectangle(mx, my, cx - 190, 272, cx - 110, 308)) pick = -1;
-    else if (point_in_rectangle(mx, my, cx - 110, 272, cx + 190, 308)) pick = 1;
-
-    // Tap the Play button
-    if (point_in_rectangle(mx, my, cx - 90, 316, cx + 90, 356)) startGame = true;
-
-    // Tap "Sound on/off" in the top-right corner
-    if (point_in_rectangle(mx, my, room_width - 110, 0, room_width, 32)) global.toggleSound();
-}
-
-// Change the mode/level, wrapping around: Campaign -> Level 1 -> ... -> Level 8 -> Campaign
-if (pick != 0)
-{
-    var choices = global.levelCount + 1;
-    global.menuChoice = (global.menuChoice + pick + choices) mod choices;
-    global.playSound(global.sndTick);
-}
-
-// --- START ---
-if (startGame)
-{
-    global.playSound(global.sndSelect);
-    global.freePlay   = (global.menuChoice > 0);
-    global.level      = global.freePlay ? global.menuChoice : 1;
-    global.totalScore = 0;
-    global.gameWon    = false;
-    room_goto(rm_game);
-}
-
-// M switches sound on/off
-if (keyboard_check_pressed(ord("M")))
-{
-    global.toggleSound();
+	global.toggleSound();
 }
