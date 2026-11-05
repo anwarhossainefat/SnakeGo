@@ -64,6 +64,22 @@ if (global.paused)
 	draw_set_alpha(1);
 	draw_set_color(c_white);
 
-	global.drawText(w / 2, h / 2 - 10, "Paused", 3, global.colText, fa_center, fa_middle);
-	global.drawText(w / 2, h / 2 + 34, global.isTouch ? "Tap anywhere to continue" : "Press P or Esc (or click) to continue", 1, global.colSub, fa_center, fa_middle);
+	global.drawText(w / 2, 126, "Paused", 3, global.colText, fa_center, fa_middle);
+
+	// Pause menu buttons (the highlighted one is green). Layout matches Step.
+	var labels = ["Resume", global.freePlay ? "Restart level" : "Restart from level 1", "Main menu"];
+	for (var b = 0; b < 3; b++)
+	{
+		var by = 196 + b * 46;
+		var focused = (b == pauseFocus);
+		draw_set_color(focused ? global.colGreen : make_color_rgb(30, 41, 59));
+		draw_roundrect_ext(w / 2 - 110, by - 19, w / 2 + 110, by + 19, 30, 30, false);
+		draw_set_color(c_white);
+		global.drawText(w / 2, by, labels[b], 2, focused ? make_color_rgb(11, 16, 32) : global.colText, fa_center, fa_middle);
+	}
+
+	if (!global.isTouch)
+	{
+		global.drawText(w / 2, 352, "Up/Down choose  ·  Enter select  ·  P or Esc to resume", 0, global.colSub, fa_center, fa_middle);
+	}
 }

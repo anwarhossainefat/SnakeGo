@@ -4,7 +4,7 @@ if (keyboard_check_pressed(ord("M")))
 	global.toggleSound();
 }
 
-// --- PAUSE: P or Esc, the pause button in the HUD, or tap anywhere while paused ---
+// --- PAUSE: P or Esc, or the II button in the HUD ---
 // Mouse/finger position. Room coordinates match the menu/HUD layout exactly (both are 672 x 416),
 // and GameMaker keeps them correct on every platform, including the web version.
 var mx = device_mouse_x(0);
@@ -12,13 +12,54 @@ var my = device_mouse_y(0);
 var tapped = device_mouse_check_button_pressed(0, mb_left);
 var onPauseButton = point_in_rectangle(mx, my, room_width - 44, 0, room_width, 32);
 
-if (keyboard_check_pressed(ord("P")) || keyboard_check_pressed(vk_escape)
-	|| (tapped && (global.paused || onPauseButton)))
+if (keyboard_check_pressed(ord("P")) || keyboard_check_pressed(vk_escape) || (tapped && onPauseButton))
 {
 	global.paused = !global.paused;
+	pauseFocus = 0;          // the pause menu always opens on "Resume"
 	global.playSound(global.sndPause);
 	tapped = false;          // this tap was used for pausing, not steering
 	swipeActive = false;
+}
+else if (global.paused)
+{
+	// --- PAUSE MENU: Resume / Restart / Main menu ---
+	// Up/Down (or W/S) to highlight, Enter/Space to choose, or tap a button. Layout matches Draw GUI.
+	if (keyboard_check_pressed(vk_up)   || keyboard_check_pressed(ord("W"))) { pauseFocus = max(0, pauseFocus - 1); global.playSound(global.sndTick); }
+	if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S"))) { pauseFocus = min(2, pauseFocus + 1); global.playSound(global.sndTick); }
+
+	var choice = (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) ? pauseFocus : -1;
+	if (tapped)
+	{
+		for (var b = 0; b < 3; b++)
+		{
+			var by = 196 + b * 46;
+			if (point_in_rectangle(mx, my, room_width / 2 - 110, by - 19, room_width / 2 + 110, by + 19)) choice = b;
+		}
+	}
+
+	if (choice == 0)
+	{
+		// Resume
+		global.paused = false;
+		global.playSound(global.sndPause);
+	}
+	else if (choice == 1)
+	{
+		// Restart: Campaign from level 1, Free play the same level. Same speed.
+		global.paused     = false;
+		global.totalScore = 0;
+		global.gameWon    = false;
+		if (!global.freePlay) global.level = 1;
+		global.playSound(global.sndSelect);
+		room_restart();
+	}
+	else if (choice == 2)
+	{
+		// Back to the menu (Free play returns to the level grid)
+		global.paused = false;
+		global.playSound(global.sndSelect);
+		room_goto(rm_menu);
+	}
 }
 
 // Freeze everything while paused, or while a phone is held upright (see obj_display)

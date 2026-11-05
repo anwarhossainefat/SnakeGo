@@ -40,6 +40,9 @@ queueTurn = function(_dir)
 	}
 };
 
+// Highlighted button in the pause menu: 0 = Resume, 1 = Restart, 2 = Main menu
+pauseFocus = 0;
+
 // Swipe tracking
 swipeActive = false;
 swipeX = 0;
