@@ -1,0 +1,1 @@
+global.totalScore = 0;
