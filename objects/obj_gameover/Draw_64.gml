@@ -1,7 +1,7 @@
 // End screen: "You win!" after the last level, otherwise "Game over"
 // Fonts: 0 = XS, 1 = S, 2 = M, 3 = L (see obj_menu Create)
-var cx = display_get_gui_width() / 2;
-var cy = display_get_gui_height() / 2;
+var cx = room_width / 2;   // the GUI is always 672 x 416, whatever the window size
+var cy = room_height / 2;
 var s  = global.speedIndex;
 
 if (global.gameWon)

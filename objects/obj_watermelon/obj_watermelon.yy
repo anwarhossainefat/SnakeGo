@@ -35,6 +35,9 @@
     "name":"spr_watermelon",
     "path":"sprites/spr_watermelon/spr_watermelon.yy",
   },
-  "spriteMaskId":null,
+  "spriteMaskId":{
+    "name":"spr_body",
+    "path":"sprites/spr_body/spr_body.yy",
+  },
   "visible":true,
 }

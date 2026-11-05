@@ -35,6 +35,9 @@
     "name":"spr_apple",
     "path":"sprites/spr_apple/spr_apple.yy",
   },
-  "spriteMaskId":null,
+  "spriteMaskId":{
+    "name":"spr_body",
+    "path":"sprites/spr_body/spr_body.yy",
+  },
   "visible":true,
 }

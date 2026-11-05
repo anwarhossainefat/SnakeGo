@@ -2,6 +2,7 @@
 // Draw the whole snake with realistic skin pieces.
 // The body objects are invisible; they're only used for collisions.
 // Pieces: spr_skin_head, spr_skin_body (straight), spr_skin_corner, spr_skin_tail
+// They are made in 3x detail and drawn at global.art scale (1/3) so they stay sharp when the game is big.
 // =====================================================================
 
 // 1) List the segment positions from head to tail.
@@ -45,7 +46,7 @@ for (var k = n - 1; k >= 1; k--)
 	if (k == n - 1)
 	{
 		// Tail: the sprite's wide end is on its left side, so turn that side to face the body
-		draw_sprite_ext(spr_skin_tail, 0, segX[k], segY[k], 1, 1, toFront - 180, c_white, 1);
+		draw_sprite_ext(spr_skin_tail, 0, segX[k], segY[k], global.art, global.art, toFront - 180, c_white, 1);
 	}
 	else
 	{
@@ -54,13 +55,13 @@ for (var k = n - 1; k >= 1; k--)
 		if ((toFront - toBack + 360) mod 360 == 180)
 		{
 			// Straight piece
-			draw_sprite_ext(spr_skin_body, 0, segX[k], segY[k], 1, 1, toFront mod 180, c_white, 1);
+			draw_sprite_ext(spr_skin_body, 0, segX[k], segY[k], global.art, global.art, toFront mod 180, c_white, 1);
 		}
 		else
 		{
 			// Corner piece: the sprite joins LEFT and DOWN, so rotate it to join toFront and toBack
 			var first = ((toBack - toFront + 360) mod 360 == 90) ? toFront : toBack;
-			draw_sprite_ext(spr_skin_corner, 0, segX[k], segY[k], 1, 1, (first + 180) mod 360, c_white, 1);
+			draw_sprite_ext(spr_skin_corner, 0, segX[k], segY[k], global.art, global.art, (first + 180) mod 360, c_white, 1);
 		}
 	}
 }
@@ -68,7 +69,7 @@ for (var k = n - 1; k >= 1; k--)
 // 3) Head on top, facing away from the neck. The tongue flicks out every 2.4 seconds.
 var headAngle = (n > 1) ? dirTo(segX[1], segY[1], x, y) : 90;
 var tongueOut = (current_time mod 2400) < 300;
-draw_sprite_ext(spr_skin_head, tongueOut ? 1 : 0, x, y, 1, 1, headAngle, c_white, 1);
+draw_sprite_ext(spr_skin_head, tongueOut ? 1 : 0, x, y, global.art, global.art, headAngle, c_white, 1);
 
 // =====================================================================
 // Floating "+points" text that drifts up and fades where food was eaten

@@ -24,6 +24,7 @@
   "resources":[
     {"id":{"name":"obj_apple","path":"objects/obj_apple/obj_apple.yy",},},
     {"id":{"name":"obj_body","path":"objects/obj_body/obj_body.yy",},},
+    {"id":{"name":"obj_display","path":"objects/obj_display/obj_display.yy",},},
     {"id":{"name":"obj_gameover","path":"objects/obj_gameover/obj_gameover.yy",},},
     {"id":{"name":"obj_menu","path":"objects/obj_menu/obj_menu.yy",},},
     {"id":{"name":"obj_obstacle","path":"objects/obj_obstacle/obj_obstacle.yy",},},
