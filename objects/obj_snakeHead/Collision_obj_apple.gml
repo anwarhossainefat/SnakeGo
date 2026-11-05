@@ -1,5 +1,12 @@
 points += 1;
-global.totalScore += 1;
+global.totalScore += applePoints;
+
+// Show "+10" where the apple was
+popupText   = "+" + string(applePoints);
+popupTimer  = room_speed; // 1 second
+popupX      = other.x;
+popupY      = other.y;
+popupColour = c_white;
 
 // Grow the snake: add a new body part at the tail
 var newBodyX = BodyPart[startBodyParts + points - 2].x;

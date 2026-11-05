@@ -21,6 +21,14 @@ dirQueue  = [];    // Turns the player pressed that haven't happened yet (max 2)
 // --- SCORE / PROGRESS ---
 applesEatenCount = 0;
 points = 0;        // Apples eaten in this level
+applePoints = 10;  // Score for each apple (watermelon points are set in obj_watermelon)
+
+// Floating "+points" text shown where food is eaten
+popupText   = "";
+popupTimer  = 0;
+popupX      = 0;
+popupY      = 0;
+popupColour = c_white;
 
 // --- BODY ---
 startBodyParts = 3;

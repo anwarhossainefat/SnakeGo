@@ -1,5 +1,8 @@
 moveTimer --;
 
+// Count down the floating "+points" text
+if (popupTimer > 0) popupTimer--;
+
 // --- READ INPUT ---
 // Each key press is saved in a small queue, so quick double turns
 // (e.g. right then down) both happen, one per move.
@@ -64,13 +67,14 @@ if(moveTimer <= 0)
 	}
 
 	// Wrap around the edges, but only in levels with no walls (Level 1).
-	// Keeps the head on the grid: x 32..640, y 32..352.
+	// Keeps the head on the grid: x 32..640, y 64..384 (the HUD bar is above y 64).
 	if (!instance_exists(obj_wall))
 	{
+		var top = 64;
 		if (x < 32)               x = room_width - 32;
 		if (x > room_width - 32)  x = 32;
-		if (y < 32)               y = room_height - 32;
-		if (y > room_height - 32) y = 32;
+		if (y < top)              y = room_height - 32;
+		if (y > room_height - 32) y = top;
 	}
 
 	// Each body part moves into the spot of the part in front of it
