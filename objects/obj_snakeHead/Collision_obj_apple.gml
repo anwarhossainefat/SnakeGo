@@ -19,11 +19,11 @@ BodyPart[startBodyParts + points - 1] = instance_create_layer(newBodyX, newBodyY
 // Destroy the apple (its Destroy event spawns the next one)
 instance_destroy(other);
 
-// --- LEVEL PROGRESSION ---
+// --- LEVEL PROGRESSION (Campaign only; in Free play the level never ends) ---
 // Eating applesPerLevel apples (set in Create) completes a level
-if (points >= applesPerLevel)
+if (!global.freePlay && points >= applesPerLevel)
 {
-    if (room_next(room) == rm_gameover)
+    if (global.level >= global.levelCount)
     {
         // That was the last level: the player wins!
         global.gameWon = true;
@@ -32,8 +32,10 @@ if (points >= applesPerLevel)
     }
     else
     {
+        // Next level: rm_game rebuilds itself from the next map
+        global.level += 1;
         global.playSound(global.sndLevelUp);
-        room_goto_next(); // Go to Level 2 or 3
+        room_restart();
     }
 
     exit; // The level is over, so skip the watermelon code below

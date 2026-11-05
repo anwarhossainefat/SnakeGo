@@ -1,4 +1,5 @@
-// Restart from Level 1 with the same speed
+// Restart: Campaign goes back to Level 1, Free play restarts the same level. Same speed.
 global.totalScore = 0;
 global.gameWon    = false;
-room_goto(Room1);
+if (!global.freePlay) global.level = 1;
+room_restart();

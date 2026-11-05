@@ -1,21 +1,22 @@
 // --- LEVEL SETTINGS ---
-// Work out which level we're on from the room
-if (room == Room1)      level = 1;
-else if (room == Room2) level = 2;
-else                    level = 3;
+// The level number and maps come from the menu (see obj_menu Create); obj_level built this level.
+level          = global.level;
+totalLevels    = global.levelCount;
+levelName      = global.levels[level - 1].name;
+applesPerLevel = 10;   // Apples needed to clear a level (in Campaign; Free play never ends)
 
-totalLevels    = 3;
-applesPerLevel = 10;   // Apples needed to clear a level
-
-// Seconds per move: depends on the speed chosen in the menu and the level.
-// The table is in obj_menu's Create event.
-moveSpeed = global.levelSpeeds[global.speedIndex][level - 1];
+// Seconds per move: the menu speed times this level's factor (later levels are faster)
+var factor = global.levelFactor[min(level, array_length(global.levelFactor)) - 1];
+moveSpeed = global.speedBase[global.speedIndex] * factor;
 global.paused = false;
+
+// "Get ready" countdown at the start of every level: 5 seconds, or until any key/tap
+readyTimer = 5 * room_speed;
 
 moveTimer = round(moveSpeed * room_speed);
 
 // --- MOVEMENT ---
-Direction = "up";  // The direction the snake is actually moving
+Direction = "right";  // The direction the snake is actually moving (every level starts facing right)
 dirQueue  = [];    // Turns the player pressed that haven't happened yet (max 2)
 
 // Add a turn to the queue (used by both the keyboard and swipes).
@@ -73,7 +74,7 @@ BodyPart[0] = obj_snakeHead;
 
 for(i=1; i < startBodyParts; i+=1)
 {
-	BodyPart[i] = instance_create_layer(x, y+32*i, "Instances", obj_body);
+	BodyPart[i] = instance_create_layer(x - 32 * i, y, "Instances", obj_body);   // body behind the head, to the left
 }
 
 

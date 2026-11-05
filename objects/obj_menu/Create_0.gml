@@ -19,19 +19,137 @@ if (!variable_global_exists("speedIndex"))
     global.speedMult  = [1, 2, 3];   // Points multiplier for each speed
     global.speedIndex = 1;           // Start on "Normal"
 
-    // Seconds per move for Level 1, 2, 3 at each speed (smaller = faster)
-    global.levelSpeeds = [
-        [0.30, 0.22, 0.16],   // Slow
-        [0.25, 0.18, 0.13],   // Normal
-        [0.18, 0.13, 0.09]    // Fast
+    // --- LEVELS ---
+    // Each level is a map of the 20 x 11 playing area:
+    //   "#" = block,  "S" = where the snake's head starts (facing right, body behind it),  "." = empty
+    // walls: true = a wall around the edge; false = the snake wraps around to the other side.
+    // To add a level, copy one entry, change its name and map, and it just works.
+    global.levels = [
+        { name: "Open field", walls: false, map: [
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "..S.................",
+            "...................." ] },
+        { name: "Walled garden", walls: true, map: [
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "....................",
+            "..S.................",
+            "...................." ] },
+        { name: "Crossroads", walls: true, map: [
+            "....................",
+            "....................",
+            "....................",
+            "..........#.........",
+            "..........#.........",
+            "........#####.......",
+            "..........#.........",
+            "..........#.........",
+            "....................",
+            "..S.................",
+            "...................." ] },
+        { name: "Twin bars", walls: true, map: [
+            "....................",
+            "....................",
+            "....................",
+            "..#########.........",
+            "....................",
+            "....................",
+            "....................",
+            ".........#########..",
+            "....................",
+            "..S.................",
+            "...................." ] },
+        { name: "Four rooms", walls: true, map: [
+            ".........#..........",
+            "....................",
+            ".........#..........",
+            ".........#..........",
+            ".........#..........",
+            "###.###########.####",
+            ".........#..........",
+            ".........#..........",
+            ".........#..........",
+            "..S.................",
+            ".........#.........." ] },
+        { name: "Wrap-around box", walls: false, map: [
+            "....................",
+            "....................",
+            ".....####..####.....",
+            ".....#........#.....",
+            ".....#........#.....",
+            "....................",
+            ".....#........#.....",
+            ".....#........#.....",
+            ".....####..####.....",
+            "..S.................",
+            "...................." ] },
+        { name: "Pillars", walls: true, map: [
+            ".....#.......#......",
+            ".....#.......#......",
+            ".....#.......#......",
+            ".....#.......#......",
+            ".....#...#...#...#..",
+            ".....#...#...#...#..",
+            ".....#...#...#...#..",
+            ".........#.......#..",
+            ".........#.......#..",
+            "..S......#.......#..",
+            ".........#.......#.." ] },
+        { name: "The maze", walls: true, map: [
+            "..........#.........",
+            "..........#.........",
+            "..######.....######.",
+            "....................",
+            "....................",
+            ".....##########.....",
+            "....................",
+            "....................",
+            "..######.....######.",
+            "..S.......#.........",
+            "..........#........." ] }
     ];
+    global.levelCount = array_length(global.levels);
 
-    // Load the saved high score for each speed (0 if never played)
+    // Seconds per move (smaller = faster): the speed chosen in the menu, times a factor
+    // that makes each level a bit quicker than the one before.
+    global.speedBase   = [0.30, 0.25, 0.18];                          // Slow, Normal, Fast
+    global.levelFactor = [1.00, 0.72, 0.60, 0.56, 0.52, 0.49, 0.46, 0.43]; // Level 1..8
+
+    // What to play: 0 = Campaign (all levels in order), 1..8 = Free play on that level
+    global.menuChoice = 0;
+    global.freePlay   = false;
+    global.level      = 1;
+
+    // Load the saved high scores:
+    //   Campaign: one per speed.  Free play: one per level and speed.
     global.highScores = [0, 0, 0];
+    global.freeBest   = [];
     ini_open("snakego_save.ini");
     for (var i = 0; i < 3; i++)
     {
         global.highScores[i] = ini_read_real("highscores", global.speedNames[i], 0);
+    }
+    for (var lvl = 1; lvl <= global.levelCount; lvl++)
+    {
+        global.freeBest[lvl] = [0, 0, 0];
+        for (var sp = 0; sp < 3; sp++)
+        {
+            global.freeBest[lvl][sp] = ini_read_real("freeplay", "L" + string(lvl) + "_" + global.speedNames[sp], 0);
+        }
     }
     ini_close();
 

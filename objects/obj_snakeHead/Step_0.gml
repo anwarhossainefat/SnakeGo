@@ -24,6 +24,17 @@ if (keyboard_check_pressed(ord("P")) || keyboard_check_pressed(vk_escape)
 // Freeze everything while paused, or while a phone is held upright (see obj_display)
 if (global.paused || global.rotateNeeded) exit;
 
+// --- GET READY (start of every level) ---
+// Wait 5 seconds, or until the player presses a key (not M or F) or taps.
+// Pressing an arrow/WASD key to start also makes that the first turn (handled just below).
+if (readyTimer > 0)
+{
+	readyTimer--;
+	var anyKey = keyboard_check_pressed(vk_anykey) && !keyboard_check_pressed(ord("M")) && !keyboard_check_pressed(ord("F"));
+	if (anyKey || tapped) readyTimer = 0;
+	if (readyTimer > 0) exit;
+}
+
 moveTimer --;
 
 // Count down the floating "+points" text

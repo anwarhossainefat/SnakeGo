@@ -11,8 +11,10 @@ draw_set_color(c_white);
 global.drawText(20, 16, "SCORE", 0, global.colSub, fa_left, fa_middle);
 global.drawText(20 + global.textWidth("SCORE", 0) + 8, 16, string(global.totalScore), 2, global.colText, fa_left, fa_middle);
 
-// Middle: "Level 1/3 · Normal"
-var levelText = "Level " + string(level) + "/" + string(totalLevels) + "  ·  " + global.speedNames[global.speedIndex];
+// Middle: "Level 4/8 · Normal" (Campaign) or "Free play · Level 4 · Normal"
+var levelText;
+if (global.freePlay) levelText = "Free play  ·  Level " + string(level) + "  ·  " + global.speedNames[global.speedIndex];
+else                 levelText = "Level " + string(level) + "/" + string(totalLevels) + "  ·  " + global.speedNames[global.speedIndex];
 global.drawText(w / 2, 16, levelText, 1, global.colText, fa_center, fa_middle);
 
 // Right: pause button (tap/click it, or press P)
@@ -24,10 +26,31 @@ draw_rectangle(w - 20, 11, w - 18, 21, false);
 draw_set_color(c_white);
 
 // Next to it: apple icon + "4/10"
-var appleText = string(points) + "/" + string(applesPerLevel);
+// Campaign shows "4/10" (apples left in this level); Free play just counts apples eaten
+var appleText = global.freePlay ? string(points) : string(points) + "/" + string(applesPerLevel);
 var appleTextW = global.textWidth(appleText, 2);
 global.drawText(w - 46, 16, appleText, 2, global.colText, fa_right, fa_middle);
 draw_sprite_ext(spr_apple, 0, w - 46 - appleTextW - 14, 16, 0.6 * global.art, 0.6 * global.art, 0, c_white, 1);
+
+// --- GET READY OVERLAY (start of every level) ---
+if (readyTimer > 0 && !global.paused)
+{
+	var rh = room_height;
+
+	// Dim the board a little so the message stands out, but the level layout is still visible
+	draw_set_alpha(0.55);
+	draw_set_color(c_black);
+	draw_rectangle(0, 32, w, rh, false);
+	draw_set_alpha(1);
+	draw_set_color(c_white);
+
+	var secondsLeft = ceil(readyTimer / room_speed);
+	var readyLabel = global.freePlay ? "Free play  ·  Level " + string(level) : "Level " + string(level) + " of " + string(totalLevels);
+	global.drawText(w / 2, 120, readyLabel, 1, global.colGreen, fa_center, fa_middle, 1, 1.3);
+	global.drawText(w / 2, 168, levelName, 3, global.colText, fa_center, fa_middle, 1, 0.9);
+	global.drawText(w / 2, 238, string(secondsLeft), 3, global.colGold, fa_center, fa_middle, 1, 1.2);
+	global.drawText(w / 2, 300, global.isTouch ? "Tap or swipe to start" : "Press any key or click to start", 1, global.colSub, fa_center, fa_middle);
+}
 
 // --- PAUSE OVERLAY ---
 if (global.paused)
