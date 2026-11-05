@@ -10,6 +10,11 @@ baseH = 416;
 cam   = camera_create_view(0, 0, baseW, baseH);   // a camera that always shows the whole game area
 lastW = -1;
 lastH = -1;
+
+// Where the game area sits inside the window (used to cover the whole screen with the rotate message)
+guiScale = 1;
+guiOffX  = 0;
+guiOffY  = 0;
 isBrowser = (os_browser != browser_not_a_browser);
 fullscreenOn = false;   // the game remembers this itself (macOS can report it late)
 
@@ -59,7 +64,10 @@ fitToWindow = function()
 	surface_resize(application_surface, surfW, surfH);
 
 	// The GUI (HUD, menus, text) keeps using 672 x 416 coordinates, lined up exactly with the game area
-	display_set_gui_maximize(surfW / baseW, surfH / baseH, (winW - surfW) / 2, (winH - surfH) / 2);
+	guiScale = surfW / baseW;
+	guiOffX  = (winW - surfW) / 2;
+	guiOffY  = (winH - surfH) / 2;
+	display_set_gui_maximize(surfW / baseW, surfH / baseH, guiOffX, guiOffY);
 };
 
 setupRoomView();

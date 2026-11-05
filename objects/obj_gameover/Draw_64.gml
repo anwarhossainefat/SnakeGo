@@ -28,4 +28,4 @@ if (newHighScore && (current_time div 400) mod 2 == 0)
 	global.drawText(cx, cy + 88, "New high score!", 2, global.colGold, fa_center, fa_middle);
 }
 
-global.drawText(cx, cy + 128, "Press R for menu", 1, global.colText, fa_center, fa_middle);
+global.drawText(cx, cy + 128, global.isTouch ? "Tap for menu" : "Press R or click for menu", 1, global.colText, fa_center, fa_middle);

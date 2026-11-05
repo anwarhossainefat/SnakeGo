@@ -41,10 +41,24 @@ for (var i = 0; i < 3; i++)
 	global.drawText(cx + 128, yy, "Best " + string(global.highScores[i]), 1, nameCol, fa_right, fa_middle);
 }
 
-// Start prompt (gently pulsing) and controls
-var pulse = 0.65 + 0.35 * sin(current_time / 300);
-global.drawText(cx, 338, "Press Enter to play", 2, global.colText, fa_center, fa_middle, pulse);
-global.drawText(cx, 372, "Arrows / WASD move  ·  P pause  ·  R restart  ·  M sound  ·  F fullscreen", 0, global.colSub, fa_center, fa_middle);
+// Play button (tap/click it, or press Enter). It gently pulses.
+var pulse = 0.85 + 0.15 * sin(current_time / 300);
+draw_set_color(global.colGreen);
+draw_set_alpha(pulse);
+draw_roundrect_ext(cx - 90, 318, cx + 90, 358, 40, 40, false);
+draw_set_alpha(1);
+draw_set_color(c_white);
+global.drawText(cx, 338, "Play", 2, make_color_rgb(11, 16, 32), fa_center, fa_middle);
+
+// Controls hint: touch or keyboard
+if (global.isTouch)
+{
+	global.drawText(cx, 384, "Tap a speed, then Play  ·  Swipe to steer  ·  Tap  II  to pause", 0, global.colSub, fa_center, fa_middle);
+}
+else
+{
+	global.drawText(cx, 384, "Enter play  ·  Arrows / WASD move  ·  P pause  ·  R restart  ·  M sound  ·  F fullscreen", 0, global.colSub, fa_center, fa_middle);
+}
 
 // Sound status, top-right corner
 global.drawText(room_width - 16, 16, global.soundOn ? "Sound on" : "Sound off", 0, global.soundOn ? global.colSub : global.colGold, fa_right, fa_middle);

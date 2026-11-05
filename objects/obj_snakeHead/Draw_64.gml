@@ -15,11 +15,19 @@ global.drawText(20 + global.textWidth("SCORE", 0) + 8, 16, string(global.totalSc
 var levelText = "Level " + string(level) + "/" + string(totalLevels) + "  ·  " + global.speedNames[global.speedIndex];
 global.drawText(w / 2, 16, levelText, 1, global.colText, fa_center, fa_middle);
 
-// Right: apple icon + "4/10"
+// Right: pause button (tap/click it, or press P)
+draw_set_color(make_color_rgb(30, 41, 59));
+draw_circle(w - 22, 16, 12, false);
+draw_set_color(global.colText);
+draw_rectangle(w - 26, 11, w - 24, 21, false);
+draw_rectangle(w - 20, 11, w - 18, 21, false);
+draw_set_color(c_white);
+
+// Next to it: apple icon + "4/10"
 var appleText = string(points) + "/" + string(applesPerLevel);
 var appleTextW = global.textWidth(appleText, 2);
-global.drawText(w - 20, 16, appleText, 2, global.colText, fa_right, fa_middle);
-draw_sprite_ext(spr_apple, 0, w - 20 - appleTextW - 14, 16, 0.6 * global.art, 0.6 * global.art, 0, c_white, 1);
+global.drawText(w - 46, 16, appleText, 2, global.colText, fa_right, fa_middle);
+draw_sprite_ext(spr_apple, 0, w - 46 - appleTextW - 14, 16, 0.6 * global.art, 0.6 * global.art, 0, c_white, 1);
 
 // --- PAUSE OVERLAY ---
 if (global.paused)
@@ -34,5 +42,5 @@ if (global.paused)
 	draw_set_color(c_white);
 
 	global.drawText(w / 2, h / 2 - 10, "Paused", 3, global.colText, fa_center, fa_middle);
-	global.drawText(w / 2, h / 2 + 34, "Press P or Esc to continue", 1, global.colSub, fa_center, fa_middle);
+	global.drawText(w / 2, h / 2 + 34, global.isTouch ? "Tap anywhere to continue" : "Press P or Esc (or click) to continue", 1, global.colSub, fa_center, fa_middle);
 }

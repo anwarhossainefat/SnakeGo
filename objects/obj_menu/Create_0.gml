@@ -7,6 +7,10 @@ if (!variable_global_exists("speedIndex"))
     // so they stay sharp when the game is scaled up to fill a big window or screen.
     global.art = 1 / 3;
 
+    // Phones and tablets: show touch hints (swipe/tap) instead of keyboard hints
+    global.isTouch = (os_type == os_android || os_type == os_ios);
+    global.rotateNeeded = false;   // set by obj_display when a phone is held upright
+
     // obj_display (persistent) scales the game to fit the window or browser, and handles F for fullscreen
     instance_create_depth(0, 0, 0, obj_display);
 

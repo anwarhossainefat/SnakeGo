@@ -18,6 +18,32 @@ moveTimer = round(moveSpeed * room_speed);
 Direction = "up";  // The direction the snake is actually moving
 dirQueue  = [];    // Turns the player pressed that haven't happened yet (max 2)
 
+// Add a turn to the queue (used by both the keyboard and swipes).
+// Quick double turns (e.g. right then down) both happen, one per move.
+queueTurn = function(_dir)
+{
+	if (array_length(dirQueue) >= 2) return;
+
+	// Compare with the last queued turn (or the current direction if nothing is queued)
+	var lastDir = (array_length(dirQueue) > 0) ? dirQueue[array_length(dirQueue) - 1] : Direction;
+
+	// Ignore the same direction, or reversing into yourself
+	var isReverse = (_dir == "up"    && lastDir == "down")
+	             || (_dir == "down"  && lastDir == "up")
+	             || (_dir == "left"  && lastDir == "right")
+	             || (_dir == "right" && lastDir == "left");
+
+	if (_dir != lastDir && !isReverse)
+	{
+		array_push(dirQueue, _dir);
+	}
+};
+
+// Swipe tracking
+swipeActive = false;
+swipeX = 0;
+swipeY = 0;
+
 // --- SCORE / PROGRESS ---
 applesEatenCount = 0;
 points = 0;        // Apples eaten in this level

@@ -4,44 +4,61 @@ if (keyboard_check_pressed(ord("M")))
 	global.toggleSound();
 }
 
-// --- PAUSE (P or Esc) ---
-if (keyboard_check_pressed(ord("P")) || keyboard_check_pressed(vk_escape))
+// --- PAUSE: P or Esc, the pause button in the HUD, or tap anywhere while paused ---
+var mx = device_mouse_x_to_gui(0);   // finger / mouse position in GUI coordinates (672 x 416)
+var my = device_mouse_y_to_gui(0);
+var tapped = device_mouse_check_button_pressed(0, mb_left);
+var onPauseButton = point_in_rectangle(mx, my, room_width - 44, 0, room_width, 32);
+
+if (keyboard_check_pressed(ord("P")) || keyboard_check_pressed(vk_escape)
+	|| (tapped && (global.paused || onPauseButton)))
 {
 	global.paused = !global.paused;
 	global.playSound(global.sndPause);
+	tapped = false;          // this tap was used for pausing, not steering
+	swipeActive = false;
 }
 
-if (global.paused) exit; // Freeze everything while paused
+// Freeze everything while paused, or while a phone is held upright (see obj_display)
+if (global.paused || global.rotateNeeded) exit;
 
 moveTimer --;
 
 // Count down the floating "+points" text
 if (popupTimer > 0) popupTimer--;
 
-// --- READ INPUT ---
-// Each key press is saved in a small queue, so quick double turns
-// (e.g. right then down) both happen, one per move.
-var pressed = "";
-if (keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up))    pressed = "up";
-if (keyboard_check_pressed(ord("S")) || keyboard_check_pressed(vk_down))  pressed = "down";
-if (keyboard_check_pressed(ord("A")) || keyboard_check_pressed(vk_left))  pressed = "left";
-if (keyboard_check_pressed(ord("D")) || keyboard_check_pressed(vk_right)) pressed = "right";
+// --- KEYBOARD STEERING ---
+if (keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up))    queueTurn("up");
+if (keyboard_check_pressed(ord("S")) || keyboard_check_pressed(vk_down))  queueTurn("down");
+if (keyboard_check_pressed(ord("A")) || keyboard_check_pressed(vk_left))  queueTurn("left");
+if (keyboard_check_pressed(ord("D")) || keyboard_check_pressed(vk_right)) queueTurn("right");
 
-if (pressed != "" && array_length(dirQueue) < 2)
+// --- SWIPE STEERING (phones and tablets; a mouse drag works too) ---
+// Put a finger down, slide it about 20 pixels in a direction, and the snake turns that way.
+// You can keep the finger down and swipe again for the next turn.
+if (tapped)
 {
-	// Compare with the last queued turn (or the current direction if nothing is queued)
-	var lastDir = (array_length(dirQueue) > 0) ? dirQueue[array_length(dirQueue) - 1] : Direction;
+	swipeActive = true;
+	swipeX = mx;
+	swipeY = my;
+}
 
-	// Ignore pressing the same direction, or reversing into yourself
-	var isReverse = (pressed == "up"    && lastDir == "down")
-	             || (pressed == "down"  && lastDir == "up")
-	             || (pressed == "left"  && lastDir == "right")
-	             || (pressed == "right" && lastDir == "left");
-
-	if (pressed != lastDir && !isReverse)
+if (swipeActive && device_mouse_check_button(0, mb_left))
+{
+	var dx = mx - swipeX;
+	var dy = my - swipeY;
+	if (max(abs(dx), abs(dy)) > 20)
 	{
-		array_push(dirQueue, pressed);
+		if (abs(dx) > abs(dy)) queueTurn(dx > 0 ? "right" : "left");
+		else                   queueTurn(dy > 0 ? "down" : "up");
+		swipeX = mx;
+		swipeY = my;
 	}
+}
+
+if (device_mouse_check_button_released(0, mb_left))
+{
+	swipeActive = false;
 }
 
 // --- MOVE ---

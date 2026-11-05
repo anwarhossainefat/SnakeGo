@@ -1,4 +1,4 @@
-if (global.paused) exit; // The timer stops while the game is paused
+if (global.paused || global.rotateNeeded) exit; // The timer stops while the game is paused
 
 bonusTimer -= 1; // Count down every frame
 

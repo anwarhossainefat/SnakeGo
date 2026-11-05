@@ -1,3 +1,6 @@
+// Ignore taps for a moment, so the finger that was steering doesn't skip this screen
+readyTimer = round(room_speed * 0.6);
+
 // Check for a new high score at the speed the player chose
 newHighScore = false;
 

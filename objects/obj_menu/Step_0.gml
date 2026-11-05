@@ -11,8 +11,35 @@ if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S")))
     global.playSound(global.sndTick);
 }
 
-// Start a new game with Enter or Space
-if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space))
+// --- TAPS / CLICKS ---
+var startGame = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space);
+
+if (device_mouse_check_button_pressed(0, mb_left) && !global.rotateNeeded)
+{
+    var mx = device_mouse_x_to_gui(0);
+    var my = device_mouse_y_to_gui(0);
+    var cx = room_width / 2;
+
+    // Tap a speed to choose it
+    for (var i = 0; i < 3; i++)
+    {
+        var yy = 204 + i * 40;
+        if (point_in_rectangle(mx, my, cx - 152, yy - 18, cx + 152, yy + 18) && global.speedIndex != i)
+        {
+            global.speedIndex = i;
+            global.playSound(global.sndTick);
+        }
+    }
+
+    // Tap the Play button
+    if (point_in_rectangle(mx, my, cx - 90, 318, cx + 90, 358)) startGame = true;
+
+    // Tap "Sound on/off" in the top-right corner
+    if (point_in_rectangle(mx, my, room_width - 110, 0, room_width, 32)) global.toggleSound();
+}
+
+// Start a new game with Enter, Space, or the Play button
+if (startGame)
 {
     global.playSound(global.sndSelect);
     global.totalScore = 0;
