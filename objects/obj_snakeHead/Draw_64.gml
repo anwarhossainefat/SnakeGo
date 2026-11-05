@@ -2,7 +2,7 @@
 var w = display_get_gui_width();
 
 // Dark background strip so the text never sits on top of the game
-draw_set_color(make_color_rgb(25, 25, 25));
+draw_set_color(make_color_rgb(8, 12, 24));
 draw_rectangle(0, 0, w, 31, false);
 
 // Score (left), level (middle), apples left in this level (right)
