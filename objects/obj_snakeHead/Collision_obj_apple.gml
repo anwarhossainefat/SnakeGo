@@ -10,8 +10,8 @@ BodyPart[startBodyParts + points - 1] = instance_create_layer(newBodyX, newBodyY
 instance_destroy(other);
 
 // --- LEVEL PROGRESSION ---
-// 10 apples completes a level
-if (points >= 10)
+// Eating applesPerLevel apples (set in Create) completes a level
+if (points >= applesPerLevel)
 {
     if (room_next(room) == rm_gameover)
     {

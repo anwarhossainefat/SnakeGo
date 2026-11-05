@@ -1,51 +1,63 @@
 moveTimer --;
 
-// Steering: WASD or arrow keys.
-// The image_angle checks stop the snake from reversing into itself.
-if((keyboard_check(ord("W")) || keyboard_check(vk_up)) && image_angle != 180)
+// --- READ INPUT ---
+// Each key press is saved in a small queue, so quick double turns
+// (e.g. right then down) both happen, one per move.
+var pressed = "";
+if (keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up))    pressed = "up";
+if (keyboard_check_pressed(ord("S")) || keyboard_check_pressed(vk_down))  pressed = "down";
+if (keyboard_check_pressed(ord("A")) || keyboard_check_pressed(vk_left))  pressed = "left";
+if (keyboard_check_pressed(ord("D")) || keyboard_check_pressed(vk_right)) pressed = "right";
+
+if (pressed != "" && array_length(dirQueue) < 2)
 {
-	Direction = "up";
+	// Compare with the last queued turn (or the current direction if nothing is queued)
+	var lastDir = (array_length(dirQueue) > 0) ? dirQueue[array_length(dirQueue) - 1] : Direction;
+
+	// Ignore pressing the same direction, or reversing into yourself
+	var isReverse = (pressed == "up"    && lastDir == "down")
+	             || (pressed == "down"  && lastDir == "up")
+	             || (pressed == "left"  && lastDir == "right")
+	             || (pressed == "right" && lastDir == "left");
+
+	if (pressed != lastDir && !isReverse)
+	{
+		array_push(dirQueue, pressed);
+	}
 }
 
-if((keyboard_check(ord("S")) || keyboard_check(vk_down)) && image_angle != 0)
-{
-	Direction = "down";
-}
-
-if((keyboard_check(ord("A")) || keyboard_check(vk_left)) && image_angle != 270)
-{
-	Direction = "left";
-}
-
-if((keyboard_check(ord("D")) || keyboard_check(vk_right)) && image_angle != 90)
-{
-	Direction = "right";
-}
-
-prevHeadX = x;
-prevHeadY = y;
-
+// --- MOVE ---
 if(moveTimer <= 0)
 {
-	if(Direction = "up")
+	// Take the next queued turn, if there is one
+	if (array_length(dirQueue) > 0)
+	{
+		Direction = dirQueue[0];
+		array_delete(dirQueue, 0, 1);
+	}
+
+	prevHeadX = x;
+	prevHeadY = y;
+
+	if(Direction == "up")
 	{
 		y-=32;
 		image_angle = 0;
 	}
 
-	if(Direction = "down")
+	if(Direction == "down")
 	{
 		y+=32;
 		image_angle = 180;
 	}
 
-	if(Direction = "left")
+	if(Direction == "left")
 	{
 		x-=32;
 		image_angle = 90;
 	}
 
-	if(Direction = "right")
+	if(Direction == "right")
 	{
 		x+=32;
 		image_angle = 270;
@@ -74,5 +86,5 @@ if(moveTimer <= 0)
 		prevHeadY = prevY;
 	}
 
-	moveTimer = moveSpeed * room_speed;
+	moveTimer = round(moveSpeed * room_speed);
 }

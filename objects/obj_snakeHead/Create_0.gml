@@ -1,10 +1,28 @@
+// --- LEVEL SETTINGS ---
+// Work out which level we're on from the room
+if (room == Room1)      level = 1;
+else if (room == Room2) level = 2;
+else                    level = 3;
+
+totalLevels    = 3;
+applesPerLevel = 10;   // Apples needed to clear a level
+
+// Seconds per move for each level (smaller = faster). Change these to tune difficulty.
+if (level == 1)      moveSpeed = 0.25;
+else if (level == 2) moveSpeed = 0.18;
+else                 moveSpeed = 0.13;
+
+moveTimer = round(moveSpeed * room_speed);
+
+// --- MOVEMENT ---
+Direction = "up";  // The direction the snake is actually moving
+dirQueue  = [];    // Turns the player pressed that haven't happened yet (max 2)
+
+// --- SCORE / PROGRESS ---
 applesEatenCount = 0;
+points = 0;        // Apples eaten in this level
 
-moveSpeed = 0.5; //The smaller, the faster
-moveTimer = moveSpeed * room_speed
-Direction = "up";
-
-points = 0;
+// --- BODY ---
 startBodyParts = 3;
 
 BodyPart[0] = obj_snakeHead;

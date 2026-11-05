@@ -1,10 +1,7 @@
-// Calculate bonus: (Remaining Time / Total Time) * Max Points
-// If you eat it instantly, you get ~500. If you eat it at the last second, you get ~10.
-var speedBonus = round((other.bonusTimer / (10 * room_speed)) * other.maxBonus);
+// Bonus depends on how fast you reach it: (time left / total time) * max points.
+// Eat it right away for 5 points; at the last second you still get 1.
+var speedBonus = max(1, round((other.bonusTimer / (10 * room_speed)) * other.maxBonus));
 
 global.totalScore += speedBonus;
-
-// Optional: Add to 'points' if you want it to help level progression
-// points += 1; 
 
 instance_destroy(other); // Remove the watermelon

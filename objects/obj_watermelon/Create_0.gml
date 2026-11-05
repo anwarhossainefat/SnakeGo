@@ -20,4 +20,4 @@ while (!validSpot)
 }
 
 bonusTimer = 10 * room_speed; // 10 seconds worth of frames
-maxBonus = 500;               // The maximum possible score (we rebalance this in Phase 5)
+maxBonus = 5;                 // The most points a watermelon can give
