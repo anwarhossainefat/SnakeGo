@@ -1,1 +1,0 @@
-y = room_height - 16;

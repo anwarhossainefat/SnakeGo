@@ -27,12 +27,9 @@ if (points >= 10)
 
 applesEatenCount += 1;
 
-// Every 4th apple, spawn a watermelon
-if (applesEatenCount % 4 == 0) 
+// Every 4th apple, spawn a watermelon (only if there isn't one already).
+// Its Create event picks a free grid cell.
+if (applesEatenCount % 4 == 0 && !instance_exists(obj_watermelon))
 {
-    // Use the same safe spawning logic as your apple
-    var bonusX = -16 + 32 * round(random_range(32, room_width - 32) / 32);
-    var bonusY = -16 + 32 * round(random_range(32, room_height - 32) / 32);
-
-    instance_create_layer(bonusX, bonusY, "Instances", obj_watermelon);
+    instance_create_layer(0, 0, "Instances", obj_watermelon);
 }
