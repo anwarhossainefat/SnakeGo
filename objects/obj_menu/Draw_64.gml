@@ -63,6 +63,13 @@ if (global.menuScreen == "home")
 		global.drawText(bcx, 311, subs[b], 0, focused ? dark : global.colSub, fa_center, fa_middle);
 	}
 
+	// --- CREDIT + LINK TO THE SOURCE CODE --- (the green part opens the GitHub repo; see Step)
+	var creditText = "by Anwar Hossain Efat  ·  CS 5539, Idaho State University  ·  ";
+	var linkText   = "Source code on GitHub";
+	var creditX    = cx - (global.textWidth(creditText, 0) + global.textWidth(linkText, 0)) / 2;
+	global.drawText(creditX, 404, creditText, 0, global.colSub, fa_left, fa_middle);
+	global.drawText(creditX + global.textWidth(creditText, 0), 404, linkText, 0, global.colGreen, fa_left, fa_middle);
+
 	// --- CONTROLS HINT --- (touch or keyboard)
 	if (global.isTouch)
 	{

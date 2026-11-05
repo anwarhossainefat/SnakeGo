@@ -65,6 +65,18 @@ if (global.menuScreen == "home")
 		if (point_in_rectangle(mx, my, cx + 10, 270, cx + 180, 326)) chooseMode = 1;
 	}
 
+	// Tap/click "Source code on GitHub" at the bottom to open the project's repository (in a new tab on the web)
+	if (tapped)
+	{
+		var creditW = global.textWidth("by Anwar Hossain Efat  ·  CS 5539, Idaho State University  ·  ", 0);
+		var linkW   = global.textWidth("Source code on GitHub", 0);
+		var linkX   = cx - (creditW + linkW) / 2 + creditW;
+		if (point_in_rectangle(mx, my, linkX - 6, 394, linkX + linkW + 6, 416))
+		{
+			url_open_ext("https://github.com/anwarhossainefat/SnakeGo", "_blank");
+		}
+	}
+
 	if (chooseMode == 0)
 	{
 		global.modeFocus = 0;
