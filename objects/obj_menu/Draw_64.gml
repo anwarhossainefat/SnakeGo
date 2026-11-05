@@ -1,44 +1,47 @@
 // --- MENU SCREEN ---
+// Fonts: 0 = XS, 1 = S, 2 = M, 3 = L (see Create)
 var cx = display_get_gui_width() / 2;
 
-draw_set_halign(fa_center);
-draw_set_valign(fa_middle);
+// A little snake chasing an apple above the title, made from the same skin pieces as the game
+var sy = 64;
+draw_sprite_ext(spr_skin_tail, 0, cx - 96, sy, 1, 1, 180, c_white, 1);
+for (var k = 0; k < 4; k++)
+{
+	draw_sprite_ext(spr_skin_body, 0, cx - 64 + k * 32, sy, 1, 1, 0, c_white, 1);
+}
+var tongueOut = (current_time mod 2400) < 300;
+draw_sprite_ext(spr_skin_head, tongueOut ? 1 : 0, cx + 64, sy, 1, 1, 0, c_white, 1);
+var bob = 1 + 0.06 * sin(current_time / 250);
+draw_sprite_ext(spr_apple, 0, cx + 136, sy, bob, bob, 0, c_white, 1);
 
 // Title
-draw_set_color(c_lime);
-draw_text_transformed(cx, 75, "SNAKEGO", 3, 3, 0);
+global.drawText(cx, 126, "SnakeGo", 3, global.colText, fa_center, fa_middle);
+global.drawText(cx, 164, "Choose your speed", 1, global.colSub, fa_center, fa_middle);
 
-draw_set_color(c_white);
-draw_text(cx, 145, "Choose your speed");
-
-// Speed options: the selected one is yellow with arrows
+// Speed options. The selected one sits inside a green outlined pill.
 for (var i = 0; i < 3; i++)
 {
-    var label = global.speedNames[i]
-              + "   x" + string(global.speedMult[i]) + " points"
-              + "   Best: " + string(global.highScores[i]);
+	var yy = 204 + i * 40;
+	var selected = (i == global.speedIndex);
 
-    if (i == global.speedIndex)
-    {
-        draw_set_color(c_yellow);
-        label = ">  " + label + "  <";
-    }
-    else
-    {
-        draw_set_color(c_gray);
-    }
+	if (selected)
+	{
+		draw_set_color(global.colGreen);
+		draw_roundrect_ext(cx - 152, yy - 18, cx + 152, yy + 18, 34, 34, false);
+		draw_set_color(make_color_rgb(30, 41, 59));
+		draw_roundrect_ext(cx - 150, yy - 16, cx + 150, yy + 16, 30, 30, false);
+		draw_set_color(c_white);
+	}
 
-    draw_text(cx, 185 + i * 34, label);
+	var nameCol  = selected ? global.colText  : global.colSub;
+	var multCol  = selected ? global.colGreen : global.colSub;
+
+	global.drawText(cx - 128, yy, global.speedNames[i], 2, nameCol, fa_left, fa_middle);
+	global.drawText(cx, yy, "x" + string(global.speedMult[i]) + " points", 1, multCol, fa_center, fa_middle);
+	global.drawText(cx + 128, yy, "Best " + string(global.highScores[i]), 1, nameCol, fa_right, fa_middle);
 }
 
-// Instructions
-draw_set_color(c_white);
-draw_text(cx, 310, "Up/Down: choose speed     Enter/Space: start");
-
-draw_set_color(c_gray);
-draw_text(cx, 350, "In game:  Arrows/WASD move    P/Esc pause    R restart");
-
-// Reset drawing settings
-draw_set_color(c_white);
-draw_set_halign(fa_left);
-draw_set_valign(fa_top);
+// Start prompt (gently pulsing) and controls
+var pulse = 0.65 + 0.35 * sin(current_time / 300);
+global.drawText(cx, 338, "Press Enter to play", 2, global.colText, fa_center, fa_middle, pulse);
+global.drawText(cx, 372, "Arrows / WASD move  ·  P pause  ·  R restart", 0, global.colSub, fa_center, fa_middle);

@@ -76,17 +76,5 @@ draw_sprite_ext(spr_skin_head, tongueOut ? 1 : 0, x, y, 1, 1, headAngle, c_white
 if (popupTimer > 0)
 {
 	var progress = 1 - popupTimer / room_speed; // 0 at start, 1 at the end
-
-	draw_set_halign(fa_center);
-	draw_set_valign(fa_middle);
-	draw_set_alpha(1 - progress);
-	draw_set_color(popupColour);
-
-	draw_text(popupX, popupY - 20 * progress, popupText);
-
-	// Reset drawing settings
-	draw_set_alpha(1);
-	draw_set_color(c_white);
-	draw_set_halign(fa_left);
-	draw_set_valign(fa_top);
+	global.drawText(popupX, popupY - 20 * progress, popupText, 2, popupColour, fa_center, fa_middle, 1 - progress);
 }

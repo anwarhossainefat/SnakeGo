@@ -6,7 +6,7 @@ popupText   = "+" + string(applePoints);
 popupTimer  = room_speed; // 1 second
 popupX      = other.x;
 popupY      = other.y;
-popupColour = c_white;
+popupColour = global.colText;
 
 // Grow the snake: add a new body part at the tail
 var newBodyX = BodyPart[startBodyParts + points - 2].x;

@@ -11,6 +11,6 @@ popupText   = "+" + string(speedBonus);
 popupTimer  = room_speed; // 1 second
 popupX      = other.x;
 popupY      = other.y;
-popupColour = c_yellow;
+popupColour = global.colGold;
 
 instance_destroy(other); // Remove the watermelon
