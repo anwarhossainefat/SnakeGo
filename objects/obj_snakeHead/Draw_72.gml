@@ -1,4 +1,9 @@
 // Draw Begin runs before every other object's Draw, so the board ends up underneath everything.
+// (The rooms' Background layers are hidden, because they would be drawn on top of this.)
+
+// Fill the whole room with the dark navy background first
+draw_clear(make_color_rgb(11, 16, 32));
+
 // A subtle checkerboard over the playing area (cell centres x 32..640, y 64..384).
 var colA = make_color_rgb(20, 27, 45);
 var colB = make_color_rgb(24, 32, 53);

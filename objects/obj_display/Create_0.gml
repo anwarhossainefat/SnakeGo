@@ -11,6 +11,7 @@ cam   = camera_create_view(0, 0, baseW, baseH);   // a camera that always shows 
 lastW = -1;
 lastH = -1;
 isBrowser = (os_browser != browser_not_a_browser);
+fullscreenOn = false;   // the game remembers this itself (macOS can report it late)
 
 // Colour of the bars around the game when the window is a different shape
 window_set_colour(make_color_rgb(8, 12, 24));

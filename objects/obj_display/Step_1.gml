@@ -4,5 +4,6 @@ fitToWindow();
 // F switches fullscreen on and off
 if (keyboard_check_pressed(ord("F")))
 {
-	window_set_fullscreen(!window_get_fullscreen());
+	fullscreenOn = !fullscreenOn;
+	window_set_fullscreen(fullscreenOn);
 }
