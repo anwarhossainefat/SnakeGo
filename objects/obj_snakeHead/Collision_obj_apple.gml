@@ -1,28 +1,30 @@
 points += 1;
 global.totalScore += 1;
 
-// Grow the snake (Your original logic)
+// Grow the snake: add a new body part at the tail
 var newBodyX = BodyPart[startBodyParts + points - 2].x;
 var newBodyY = BodyPart[startBodyParts + points - 2].y;
 BodyPart[startBodyParts + points - 1] = instance_create_layer(newBodyX, newBodyY, "Instances", obj_body);
 
-// Destroy the apple (which triggers the Create event of a new apple)
+// Destroy the apple (its Destroy event spawns the next one)
 instance_destroy(other);
 
-// --- NEW CODE: LEVEL PROGRESSION ---
-// Check if player collected 10 fruits 
-if (points >= 10) 
+// --- LEVEL PROGRESSION ---
+// 10 apples completes a level
+if (points >= 10)
 {
-    if (room_exists(room_next(room)))
+    if (room_next(room) == rm_gameover)
     {
-        room_goto_next(); // Go to Level 2 or 3
+        // That was the last level: the player wins!
+        global.gameWon = true;
+        room_goto(rm_gameover);
     }
     else
     {
-        // If there are no more rooms, you win!
-        show_message("You Win!");
-        game_restart();
+        room_goto_next(); // Go to Level 2 or 3
     }
+
+    exit; // The level is over, so skip the watermelon code below
 }
 
 applesEatenCount += 1;
