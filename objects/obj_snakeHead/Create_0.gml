@@ -30,6 +30,16 @@ popupX      = 0;
 popupY      = 0;
 popupColour = c_white;
 
+// Stops the crash code running twice if the head hits two things at once
+crashed = false;
+
+// Particle system for the "eaten" bursts (drawn above the snake)
+if (!variable_global_exists("ps") || !part_system_exists(global.ps))
+{
+	global.ps = part_system_create();
+	part_system_depth(global.ps, -1000);
+}
+
 // --- BODY ---
 startBodyParts = 3;
 

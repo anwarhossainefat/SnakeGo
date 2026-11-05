@@ -1,7 +1,14 @@
+// --- SOUND ON/OFF (M) ---
+if (keyboard_check_pressed(ord("M")))
+{
+	global.toggleSound();
+}
+
 // --- PAUSE (P or Esc) ---
 if (keyboard_check_pressed(ord("P")) || keyboard_check_pressed(vk_escape))
 {
 	global.paused = !global.paused;
+	global.playSound(global.sndPause);
 }
 
 if (global.paused) exit; // Freeze everything while paused

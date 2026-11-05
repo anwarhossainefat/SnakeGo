@@ -91,4 +91,84 @@ if (!variable_global_exists("speedIndex"))
     global.colSub   = make_color_rgb(148, 163, 184);
     global.colGreen = make_color_rgb(74, 222, 128);
     global.colGold  = make_color_rgb(250, 204, 21);
+
+    // --- SOUND ---
+    // Sound on/off is remembered between games (M key toggles it)
+    ini_open("snakego_save.ini");
+    global.soundOn = ini_read_real("settings", "sound", 1);
+    ini_close();
+
+    // The game makes its own retro sound effects in code instead of using sound files.
+    // Each sound is a list of notes: [start frequency, end frequency, seconds].
+    // Waves: 0 = sine, 1 = square, 2 = triangle, 3 = noise.
+    global.makeSound = method(undefined, function(_notes, _wave, _vol)
+    {
+        var rate  = 22050;   // samples per second
+        var total = 0;
+        for (var n = 0; n < array_length(_notes); n++) total += round(_notes[n][2] * rate);
+
+        var buf   = buffer_create(total * 2, buffer_fixed, 2);
+        var phase = 0;
+
+        for (var j = 0; j < array_length(_notes); j++)
+        {
+            var f0  = _notes[j][0];
+            var f1  = _notes[j][1];
+            var len = round(_notes[j][2] * rate);
+
+            for (var s = 0; s < len; s++)
+            {
+                var t = s / len;
+                phase += lerp(f0, f1, t) / rate;
+                var p = phase - floor(phase);
+
+                var v;
+                if (_wave == 0)      v = sin(p * 2 * pi);
+                else if (_wave == 1) v = (p < 0.5) ? 0.6 : -0.6;
+                else if (_wave == 2) v = 1 - 4 * abs(p - 0.5);
+                else                 v = random_range(-1, 1);
+
+                // Quick fade-in, smooth fade-out for each note
+                var env = min(1, s / (0.004 * rate)) * power(1 - t, 1.6);
+                buffer_write(buf, buffer_s16, round(v * env * _vol * 32767));
+            }
+        }
+        return audio_create_buffer_sound(buf, buffer_s16, rate, 0, total * 2, audio_mono);
+    });
+
+    global.sndEat     = global.makeSound([[620, 940, 0.08]], 2, 0.55);
+    global.sndMelon   = global.makeSound([[880, 880, 0.06], [1175, 1175, 0.06], [1568, 1568, 0.10]], 2, 0.5);
+    global.sndLevelUp = global.makeSound([[523, 523, 0.09], [659, 659, 0.09], [784, 784, 0.09], [1047, 1047, 0.18]], 1, 0.3);
+    global.sndWin     = global.makeSound([[523, 523, 0.12], [659, 659, 0.12], [784, 784, 0.12], [1047, 1047, 0.12], [784, 784, 0.10], [1047, 1047, 0.40]], 1, 0.3);
+    global.sndCrash   = global.makeSound([[240, 50, 0.40]], 1, 0.4);
+    global.sndCrashFx = global.makeSound([[0, 0, 0.22]], 3, 0.35);
+    global.sndTick    = global.makeSound([[1200, 1200, 0.03]], 2, 0.35);
+    global.sndSelect  = global.makeSound([[660, 990, 0.12]], 2, 0.45);
+    global.sndPause   = global.makeSound([[700, 500, 0.08]], 2, 0.4);
+
+    // Play a sound only if sound is switched on
+    global.playSound = method(undefined, function(_snd)
+    {
+        if (global.soundOn) audio_play_sound(_snd, 1, false);
+    });
+
+    // Switch sound on/off and remember the choice
+    global.toggleSound = method(undefined, function()
+    {
+        global.soundOn = !global.soundOn;
+        ini_open("snakego_save.ini");
+        ini_write_real("settings", "sound", global.soundOn);
+        ini_close();
+        if (global.soundOn) audio_play_sound(global.sndTick, 1, false);
+    });
+
+    // --- EFFECTS ---
+    // A small burst of dots when food is eaten (one particle type, reused everywhere)
+    global.ptBurst = part_type_create();
+    part_type_shape(global.ptBurst, pt_shape_disk);
+    part_type_size(global.ptBurst, 0.05, 0.11, -0.002, 0);
+    part_type_speed(global.ptBurst, 1.2, 3.0, -0.09, 0);
+    part_type_direction(global.ptBurst, 0, 359, 0, 0);
+    part_type_alpha2(global.ptBurst, 1, 0);
+    part_type_life(global.ptBurst, 16, 28);
 }

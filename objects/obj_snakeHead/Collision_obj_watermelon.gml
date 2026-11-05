@@ -13,4 +13,8 @@ popupX      = other.x;
 popupY      = other.y;
 popupColour = global.colGold;
 
+// Sparkly sound and a bigger golden burst
+global.playSound(global.sndMelon);
+part_particles_create_colour(global.ps, other.x, other.y, global.ptBurst, global.colGold, 18);
+
 instance_destroy(other); // Remove the watermelon

@@ -8,6 +8,9 @@ popupX      = other.x;
 popupY      = other.y;
 popupColour = global.colText;
 
+// A little red burst where the apple was
+part_particles_create_colour(global.ps, other.x, other.y, global.ptBurst, make_color_rgb(239, 68, 68), 10);
+
 // Grow the snake: add a new body part at the tail
 var newBodyX = BodyPart[startBodyParts + points - 2].x;
 var newBodyY = BodyPart[startBodyParts + points - 2].y;
@@ -24,15 +27,20 @@ if (points >= applesPerLevel)
     {
         // That was the last level: the player wins!
         global.gameWon = true;
+        global.playSound(global.sndWin);
         room_goto(rm_gameover);
     }
     else
     {
+        global.playSound(global.sndLevelUp);
         room_goto_next(); // Go to Level 2 or 3
     }
 
     exit; // The level is over, so skip the watermelon code below
 }
+
+// Normal apple (the level isn't over)
+global.playSound(global.sndEat);
 
 applesEatenCount += 1;
 

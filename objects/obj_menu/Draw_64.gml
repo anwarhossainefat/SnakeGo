@@ -44,4 +44,7 @@ for (var i = 0; i < 3; i++)
 // Start prompt (gently pulsing) and controls
 var pulse = 0.65 + 0.35 * sin(current_time / 300);
 global.drawText(cx, 338, "Press Enter to play", 2, global.colText, fa_center, fa_middle, pulse);
-global.drawText(cx, 372, "Arrows / WASD move  ·  P pause  ·  R restart", 0, global.colSub, fa_center, fa_middle);
+global.drawText(cx, 372, "Arrows / WASD move  ·  P pause  ·  R restart  ·  M sound", 0, global.colSub, fa_center, fa_middle);
+
+// Sound status, top-right corner
+global.drawText(display_get_gui_width() - 16, 16, global.soundOn ? "Sound on" : "Sound off", 0, global.soundOn ? global.colSub : global.colGold, fa_right, fa_middle);
