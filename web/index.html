@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Phones: no pinch-zoom, use the whole screen (including around the notch) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#080c18" />
+    <meta name="description" content="SnakeGo: a modern take on the classic Snake game, made with GameMaker. Three levels, three speeds, realistic snake. Play in your browser on a computer or phone." />
+    <title>SnakeGo</title>
+    <link rel="icon" href="favicon.ico" />
+    <style>
+        /* Fill the browser window with the game's dark navy colour and never scroll */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #080c18;
+            overscroll-behavior: none;
+        }
+        /* Stop text selection, long-press menus and tap flashes while swiping on a phone */
+        body {
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        div.gm4html5_div_class {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+        /* The game sizes the canvas to the window itself; keep it smooth and stop the page reacting to touches */
+        canvas {
+            display: block;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: none;
+            touch-action: none;
+            -ms-touch-action: none;
+        }
+        :-webkit-full-screen #canvas, :fullscreen #canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="gm4html5_div_class" id="gm4html5_div_id">
+        <canvas id="canvas" width="672" height="416">
+            <p>Your browser doesn't support HTML5 canvas.</p>
+        </canvas>
+    </div>
+
+    <!-- The game code exported by GameMaker. The number changes each publish so browsers load the new version. -->
+    <script type="text/javascript" src="html5game/SnakeGo.js?cachebust=__CACHEBUST__"></script>
+    <script>window.onload = GameMaker_Init;</script>
+</body>
+</html>
