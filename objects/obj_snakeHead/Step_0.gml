@@ -1,3 +1,11 @@
+// --- PAUSE (P or Esc) ---
+if (keyboard_check_pressed(ord("P")) || keyboard_check_pressed(vk_escape))
+{
+	global.paused = !global.paused;
+}
+
+if (global.paused) exit; // Freeze everything while paused
+
 moveTimer --;
 
 // Count down the floating "+points" text

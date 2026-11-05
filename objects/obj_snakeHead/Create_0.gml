@@ -7,10 +7,10 @@ else                    level = 3;
 totalLevels    = 3;
 applesPerLevel = 10;   // Apples needed to clear a level
 
-// Seconds per move for each level (smaller = faster). Change these to tune difficulty.
-if (level == 1)      moveSpeed = 0.25;
-else if (level == 2) moveSpeed = 0.18;
-else                 moveSpeed = 0.13;
+// Seconds per move: depends on the speed chosen in the menu and the level.
+// The table is in obj_menu's Create event.
+moveSpeed = global.levelSpeeds[global.speedIndex][level - 1];
+global.paused = false;
 
 moveTimer = round(moveSpeed * room_speed);
 
@@ -21,7 +21,7 @@ dirQueue  = [];    // Turns the player pressed that haven't happened yet (max 2)
 // --- SCORE / PROGRESS ---
 applesEatenCount = 0;
 points = 0;        // Apples eaten in this level
-applePoints = 10;  // Score for each apple (watermelon points are set in obj_watermelon)
+applePoints = 10 * global.speedMult[global.speedIndex];  // Faster speed = more points (watermelon points are set in obj_watermelon)
 
 // Floating "+points" text shown where food is eaten
 popupText   = "";

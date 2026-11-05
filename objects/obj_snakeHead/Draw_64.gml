@@ -13,10 +13,27 @@ draw_set_halign(fa_left);
 draw_text(20, 16, "Score: " + string(global.totalScore));
 
 draw_set_halign(fa_center);
-draw_text(w / 2, 16, "Level " + string(level) + "/" + string(totalLevels));
+draw_text(w / 2, 16, "Level " + string(level) + "/" + string(totalLevels) + "  -  " + global.speedNames[global.speedIndex]);
 
 draw_set_halign(fa_right);
 draw_text(w - 20, 16, "Apples: " + string(points) + "/" + string(applesPerLevel));
+
+// --- PAUSE OVERLAY ---
+if (global.paused)
+{
+	var h = display_get_gui_height();
+
+	// Darken the play area
+	draw_set_alpha(0.6);
+	draw_set_color(c_black);
+	draw_rectangle(0, 32, w, h, false);
+	draw_set_alpha(1);
+
+	draw_set_color(c_white);
+	draw_set_halign(fa_center);
+	draw_text_transformed(w / 2, h / 2, "PAUSED", 2, 2, 0);
+	draw_text(w / 2, h / 2 + 40, "Press P or Esc to continue");
+}
 
 // Reset text alignment
 draw_set_halign(fa_left);

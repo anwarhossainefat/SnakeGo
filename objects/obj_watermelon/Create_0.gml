@@ -20,5 +20,7 @@ while (!validSpot)
 }
 
 bonusTimer = 10 * room_speed; // 10 seconds worth of frames
-maxBonus = 50;                // Points if eaten instantly
-minBonus = 10;                // Points if eaten at the last second
+// Points depend on how fast you eat it, times the speed multiplier from the menu
+var mult = global.speedMult[global.speedIndex];
+maxBonus = 50 * mult;         // Points if eaten instantly
+minBonus = 10 * mult;         // Points if eaten at the last second
